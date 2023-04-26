@@ -80,6 +80,6 @@ python manage.py runserver
 Документация будет доступна после запуска проекта по адресу `/redoc/`.
 
 ## Авторы
-- :white_check_mark: [Vitaliy Pavlov (Python-разработчик - тимлид)](https://github.com/v-2841)
-- :white_check_mark: [Aleksei Kashtanov (Python-разработчик)](https://github.com/frensiss2001)
-- :white_check_mark: [Vadim Demin (Python-разработчик)](https://github.com/Jaguar0505)
+- [Vitaliy Pavlov (Python-разработчик - тимлид)](https://github.com/v-2841)
+- [Aleksei Kashtanov (Python-разработчик)](https://github.com/frensiss2001)
+- [Vadim Demin (Python-разработчик)](https://github.com/Jaguar0505)
