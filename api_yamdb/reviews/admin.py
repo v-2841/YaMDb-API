@@ -43,10 +43,19 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('role',)
 
 
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'title',
+        'author',
+        'score',
+    )
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Title, TitleAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Genre, GenreAdmin)
 admin.site.register(GenreTitle)
-admin.site.register(Review)
+admin.site.register(Review, ReviewAdmin)
 admin.site.register(Comment)
