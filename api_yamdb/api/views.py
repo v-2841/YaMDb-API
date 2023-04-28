@@ -1,12 +1,16 @@
-from rest_framework import generics
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
 
-from reviews.models import User, Category, Genre, Title, Review, Comment
+from .permissions import (
+    IsAdminOrReadOnly, IsAdminOrModeratorOrReadOnly,
+    IsAuthorOrModeratorOrAdminOrReadOnly, IsAuthorOrReadOnly,
+)
 from .serializers import (UserSerializer, CategorySerializer, GenreSerializer,
                           TitleSerializer, ReviewSerializer, CommentSerializer,
                           SignUpSerializer, TokenSerializer)
+from reviews.models import User, Category, Genre, Title, Review, Comment
 
 
 from django.shortcuts import get_object_or_404
@@ -18,79 +22,45 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-class UserList(generics.ListCreateAPIView):
+class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class CategoryList(generics.ListCreateAPIView):
+class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-
-class GenreList(generics.ListCreateAPIView):
+class GenreViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
-class GenreDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Genre.objects.all()
-    serializer_class = GenreSerializer
-
-
-class TitleList(generics.ListCreateAPIView):
+class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
 
 
-class TitleDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Title.objects.all()
-    serializer_class = TitleSerializer
-
-
-class ReviewList(generics.ListCreateAPIView):
+class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
 
-class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-
-
-class CommentList(generics.ListCreateAPIView):
+class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
 
-class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+class SignUpViewSet(APIView):
+    permission_classes = (AllowAny,)
 
-
-class SignUpView(APIView):
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -107,7 +77,7 @@ class SignUpView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class GetTokenView(APIView):
+class GetTokenViewSet(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
