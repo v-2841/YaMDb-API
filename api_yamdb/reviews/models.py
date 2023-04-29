@@ -20,7 +20,7 @@ class User(AbstractUser):
         max_length=20,
     )
     bio = models.TextField(blank=True, null=True)
-    confirmation_code = models.CharField(blank=True)
+    confirmation_code = models.CharField(blank=True, max_length=200)
 
 
 class Category(models.Model):
