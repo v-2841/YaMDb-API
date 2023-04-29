@@ -22,10 +22,24 @@ class User(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     confirmation_code = models.CharField(blank=True, max_length=200)
 
+    class Meta:
+        ordering = ("id",)
+
+    @property
+    def is_moderator(self):
+        return self.role == 'moderator'
+
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
+
 
 class Category(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def __str__(self) -> str:
         return self.name
@@ -34,6 +48,9 @@ class Category(models.Model):
 class Genre(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def __str__(self) -> str:
         return self.name
@@ -53,12 +70,11 @@ class Title(models.Model):
         on_delete=models.SET_NULL,
         related_name='titles',
     )
-    genre = models.ManyToManyField(Genre, through='GenreTitle')
+    genre = models.ManyToManyField(Genre)
+    description = models.TextField(blank=True, null=True)
 
-
-class GenreTitle(models.Model):
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    class Meta:
+        ordering = ("id",)
 
 
 class Review(models.Model):
@@ -67,7 +83,7 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews',
     )
-    text = models.TextField(blank=True, null=True)
+    text = models.TextField(blank=False, null=False)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -83,6 +99,7 @@ class Review(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        ordering = ("id",)
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'], name='only_one_review'),
@@ -102,3 +119,6 @@ class Comment(models.Model):
         related_name='comments',
     )
     pub_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("id",)
