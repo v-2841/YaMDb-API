@@ -1,28 +1,21 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (UserList, UserDetail, CategoryList, CategoryDetail,
-                    GenreList, GenreDetail, TitleList, TitleDetail,
-                    ReviewList, ReviewDetail, CommentList, CommentDetail,
-                    SignUpView, GetTokenView)
+from .views import (
+    UserViewSet, CategoryViewSet, GenreViewSet, TitleViewSet,
+    ReviewViewSet, CommentViewSet, SignUpViewSet, GetTokenViewSet
+)
+
 
 router_v1 = DefaultRouter()
-router_v1.register('users', UserList, basename='user')
-router_v1.register('categories', CategoryList, basename='category')
-router_v1.register('genres', GenreList, basename='genre')
-router_v1.register('titles', TitleList, basename='title')
-router_v1.register('reviews', ReviewList, basename='review')
-router_v1.register('comments', CommentList, basename='comment')
+router_v1.register('users', UserViewSet, basename='users')
+router_v1.register('categories', CategoryViewSet, basename='categories')
+router_v1.register('genres', GenreViewSet, basename='genres')
+router_v1.register('titles', TitleViewSet, basename='titles')
+router_v1.register('reviews', ReviewViewSet, basename='reviews')
+router_v1.register('comments', CommentViewSet, basename='comments')
 
 urlpatterns = [
-    path('', include(router_v1.urls)),
-    path('users/<int:pk>/', UserDetail.as_view(), name='user-detail'),
-    path('categories/<int:pk>/',
-         CategoryDetail.as_view(),
-         name='category-detail'),
-    path('genres/<int:pk>/', GenreDetail.as_view(), name='genre-detail'),
-    path('titles/<int:pk>/', TitleDetail.as_view(), name='title-detail'),
-    path('reviews/<int:pk>/', ReviewDetail.as_view(), name='review-detail'),
-    path('comments/<int:pk>/', CommentDetail.as_view(), name='comment-detail'),
-    path('signup/', SignUpView.as_view(), name='signup'),
-    path('get-token/', GetTokenView.as_view(), name='get-token'),
+    path('v1/', include(router_v1.urls)),
+    path('v1/auth/signup/', SignUpViewSet.as_view(), name='signup'),
+    path('v1/auth/get-token/', GetTokenViewSet.as_view(), name='get-token'),
 ]
