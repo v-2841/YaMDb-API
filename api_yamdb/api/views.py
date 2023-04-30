@@ -1,4 +1,5 @@
 from django.core.mail import EmailMessage
+from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -30,6 +31,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     filter_backends = (SearchFilter, )
     search_fields = ('username', )
+    http_method_names = ['get', 'post', 'head', 'patch', 'delete']
 
     @action(
         methods=['GET', 'PATCH'],
@@ -98,7 +100,16 @@ class APISignup(APIView):
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        try:
+            user = User.objects.get_or_create(
+                username=serializer.validated_data['username'],
+                email=serializer.validated_data['email'],
+            )[0]
+        except IntegrityError:
+            return Response(
+                'Имя пользователя или электронная почта занята.',
+                status=status.HTTP_400_BAD_REQUEST
+            )
         email_body = (
             f'Здравствуйте, {user.username}.'
             f'\nКод подтверждения для доступа к API: {user.confirmation_code}'

@@ -36,11 +36,17 @@ class GetTokenSerializer(serializers.ModelSerializer):
         )
 
 
-class SignUpSerializer(serializers.ModelSerializer):
+class SignUpSerializer(serializers.Serializer):
+    username = serializers.SlugField(max_length=150)
+    email = serializers.EmailField(max_length=254)
 
-    class Meta:
-        model = User
-        fields = ('email', 'username')
+    def validate_username(self, value):
+        if value.lower() == 'me':
+            raise ValidationError({"message": "недопустимый username"})
+        return value
+
+    def validate_email(self, value):
+        return value
 
 
 class CategorySerializer(serializers.ModelSerializer):
