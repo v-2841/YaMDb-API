@@ -1,61 +1,80 @@
 from django.contrib import admin
 
-from .models import (
-    User, Title, Category, Genre,
-    Review, Comment
-)
+from .models import Category, Comment, Genre, Review, Title, User
 
 
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
         'name',
+        'slug',
     )
+    search_fields = ('name',)
+    list_filter = ('name',)
+    empty_value_display = '-пусто-'
 
 
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+        'review',
+        'text',
+        'author',
+        'pub_date',
+    )
+    search_fields = ('review',)
+    list_filter = ('review',)
+    empty_value_display = '-пусто-'
+
+
+@admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
         'name',
+        'slug',
     )
+    search_fields = ('name',)
+    list_filter = ('name',)
+    empty_value_display = '-пусто-'
 
 
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'text',
+        'author',
+        'score',
+    )
+    search_fields = ('pub_date',)
+    list_filter = ('pub_date',)
+    empty_value_display = '-пусто-'
+
+
+@admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
         'name',
         'year',
         'category',
         'description',
     )
     search_fields = ('name',)
-    list_filter = (
-        'category',
-    )
+    list_filter = ('name',)
+    empty_value_display = '-пусто-'
 
 
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
         'username',
         'email',
+        'role',
+        'bio',
+        'first_name',
+        'last_name',
+        'confirmation_code',
     )
-    search_fields = ('text',)
-    list_filter = ('role',)
-
-
-class ReviewAdmin(admin.ModelAdmin):
-    list_display = (
-        'pk',
-        'title',
-        'author',
-        'score',
-    )
-
-
-admin.site.register(User, UserAdmin)
-admin.site.register(Title, TitleAdmin)
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Genre, GenreAdmin)
-admin.site.register(Review, ReviewAdmin)
-admin.site.register(Comment)
+    search_fields = ('username', 'role',)
+    list_filter = ('username',)
+    empty_value_display = '-пусто-'
