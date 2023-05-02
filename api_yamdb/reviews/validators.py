@@ -1,7 +1,12 @@
 import re
 
 from django.core.exceptions import ValidationError
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
+
+
+class UsernameRegexValidator(UnicodeUsernameValidator):
+    regex = r'^[\w.@+-]+\Z'
 
 
 def validate_username(value):

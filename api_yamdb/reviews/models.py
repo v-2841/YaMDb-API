@@ -1,9 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.tokens import default_token_generator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from .validators import validate_username, validate_year
 
@@ -23,14 +20,10 @@ class User(AbstractUser):
         validators=(validate_username,),
         max_length=150,
         unique=True,
-        blank=False,
-        null=False
     )
     email = models.EmailField(
         max_length=254,
         unique=True,
-        blank=False,
-        null=False
     )
     role = models.CharField(
         'роль',
@@ -57,8 +50,7 @@ class User(AbstractUser):
         'код подтверждения',
         max_length=255,
         null=True,
-        blank=False,
-        default='XXXX'
+        blank=True,
     )
 
     @property
@@ -67,7 +59,7 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == ADMIN
+        return self.role == ADMIN or self.is_staff
 
     @property
     def is_moderator(self):
@@ -80,16 +72,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
-@receiver(post_save, sender=User)
-def post_save(sender, instance, created, **kwargs):
-    if created:
-        confirmation_code = default_token_generator.make_token(
-            instance
-        )
-        instance.confirmation_code = confirmation_code
-        instance.save()
 
 
 class Category(models.Model):
@@ -108,7 +90,7 @@ class Category(models.Model):
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return f'{self.name} {self.name}'
+        return f'{self.name}'
 
 
 class Genre(models.Model):
@@ -127,7 +109,7 @@ class Genre(models.Model):
         verbose_name_plural = 'Жанры'
 
     def __str__(self):
-        return f'{self.name} {self.name}'
+        return f'{self.name}'
 
 
 class Title(models.Model):
@@ -175,9 +157,7 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='произведение'
     )
-    text = models.CharField(
-        max_length=200
-    )
+    text = models.TextField()
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -209,7 +189,7 @@ class Review(models.Model):
         ordering = ('pub_date',)
 
     def __str__(self):
-        return self.text
+        return self.text[:30]
 
 
 class Comment(models.Model):
@@ -219,9 +199,8 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='отзыв'
     )
-    text = models.CharField(
+    text = models.TextField(
         'текст комментария',
-        max_length=200
     )
     author = models.ForeignKey(
         User,
