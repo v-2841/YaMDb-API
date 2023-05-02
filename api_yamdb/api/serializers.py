@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
-from reviews.validators import UsernameRegexValidator
+from reviews.validators import validate_username
 
 
 class UsersSerializer(serializers.ModelSerializer):
@@ -40,13 +40,8 @@ class GetTokenSerializer(serializers.ModelSerializer):
 
 class SignUpSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=settings.LENG_DATA_USER,
-                                     validators=[UsernameRegexValidator()])
+                                     validators=[validate_username])
     email = serializers.EmailField(max_length=settings.LENG_EMAIL_USER)
-
-    def validate_username(self, value):
-        if value.lower() == 'me':
-            raise ValidationError("Недопустимый username")
-        return value
 
 
 class CategorySerializer(serializers.ModelSerializer):
