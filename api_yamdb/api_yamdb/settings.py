@@ -135,3 +135,9 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 AUTH_USER_MODEL = 'reviews.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+LENG_DATA_USER = 150
+
+LENG_EMAIL_USER = 254
+
+FROM_EMAIL = 'example@example.com'
