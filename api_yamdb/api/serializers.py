@@ -1,8 +1,10 @@
 from rest_framework import serializers
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
+from reviews.validators import UsernameRegexValidator
 
 
 class UsersSerializer(serializers.ModelSerializer):
@@ -13,7 +15,7 @@ class UsersSerializer(serializers.ModelSerializer):
             'last_name', 'bio', 'role')
 
 
-class NotAdminSerializer(serializers.ModelSerializer):
+class UserPatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
@@ -37,15 +39,13 @@ class GetTokenSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.Serializer):
-    username = serializers.SlugField(max_length=150)
-    email = serializers.EmailField(max_length=254)
+    username = serializers.CharField(max_length=settings.LENG_DATA_USER,
+                                     validators=[UsernameRegexValidator()])
+    email = serializers.EmailField(max_length=settings.LENG_EMAIL_USER)
 
     def validate_username(self, value):
         if value.lower() == 'me':
-            raise ValidationError({"message": "недопустимый username"})
-        return value
-
-    def validate_email(self, value):
+            raise ValidationError("Недопустимый username")
         return value
 
 
@@ -74,8 +74,8 @@ class TitleReadSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
-        fields = '__all__'
         model = Title
+        fields = '__all__'
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
@@ -90,8 +90,8 @@ class TitleWriteSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = '__all__'
         model = Title
+        fields = '__all__'
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -122,20 +122,21 @@ class ReviewSerializer(serializers.ModelSerializer):
         return data
 
     class Meta:
-        fields = '__all__'
         model = Review
+        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    review = serializers.SlugRelatedField(
-        slug_field='text',
-        read_only=True
-    )
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True
     )
 
     class Meta:
-        fields = '__all__'
         model = Comment
+        fields = (
+            'id',
+            'text',
+            'author',
+            'pub_date',
+        )
