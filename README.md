@@ -15,14 +15,6 @@
 
 Полная документация к API находится по эндпоинту /redoc
 
-### Стек технологий использованный в проекте:
--   Python
--   Django
--   Django REST Framework
--   REST API
--   SQLite
--   Аутентификация по JWT-токену
-
 ## Запуск проекта
 1. Клонирование репозитория
 ```
@@ -75,6 +67,14 @@ python3 manage.py runserver
 ```
 python manage.py runserver
 ```
+
+## Стек технологий:
+-   Python
+-   Django
+-   Django REST Framework
+-   REST API
+-   SQLite
+-   Аутентификация по JWT-токену
 
 ## Документация
 Документация будет доступна после запуска проекта по адресу `/redoc/`.
