@@ -73,7 +73,7 @@ python manage.py runserver
 -   Django
 -   Django REST Framework
 -   REST API
--   SQLite
+-   SQLite3
 -   Аутентификация по JWT-токену
 
 ## Документация
